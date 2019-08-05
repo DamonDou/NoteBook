@@ -1,0 +1,67 @@
+1. 页面跳转 
+
+  Navigator.of(context).pushNamed("new_page", arguments: "hi");
+  
+2. 接收页面传递过来的参数
+
+  var args=ModalRoute.of(context).settings.arguments
+  
+3. 注册路由表
+  
+  在APP对象中条件Route属性
+  
+  return new MaterialApp(
+    title: 'Flutter Demo',
+    theme: new ThemeData(
+      primarySwatch: Colors.blue,
+    ),
+    //注册路由表
+    routes:{
+     "new_page":(context)=>NewRoute(),
+    } ,
+    home: new MyHomePage(title: 'Flutter Demo Home Page'),
+  );
+  
+  
+  4. 添加资源文件
+  
+      4.1 在pubspec.yaml 文件中assets:节点下添加资源
+      4.2 资源路径为相对于pubspec.yaml文件的路径
+      4.3 在build的过程中，会在asset文件相邻的文件夹内查找文件名相同的文件。方便在系统中切换不同的资源文件
+      
+      …/pubspec.yaml
+      …/graphics/my_icon.png
+      …/graphics/background.png
+      …/graphics/dark/background.png
+      …etc.
+    
+      然后pubspec.yaml文件中只需包含:
+      
+      flutter:
+        assets:
+          - graphics/background.png
+     
+       4.4 声明图片资源
+        
+        …/my_icon.png
+        …/2.0x/my_icon.png
+        …/3.0x/my_icon.png
+        
+        自动会根据设备的像素比率选择合适的图片
+     
+  5. 加载资源
+  
+    5.1 使用rootBundle.loadString("assets/config.json"); // 使用默认的 Asset Bundle
+    
+    5.2 使用DefaultAssetBundle.loadString("assets/config.json");// 使用父级组件使用的Asset Bundle，推荐使用
+    
+    5.3 使用图片资源 image: new AssetImage('graphics/background.png') 或者 Image.asset('graphics/background.png')
+    
+    5.4 使用依赖包中的图片资源 
+      
+      new AssetImage('icons/heart.png', package: 'my_icons')
+      new Image.asset('icons/heart.png', package: 'my_icons')
+      
+    5.5 
+    
+  6.  
