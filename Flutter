@@ -60,8 +60,62 @@
     5.4 使用依赖包中的图片资源 
       
       new AssetImage('icons/heart.png', package: 'my_icons')
-      new Image.asset('icons/heart.png', package: 'my_icons')
-      
-    5.5 
+      new Image.asset('icons/heart.png', package: 'my_icons')    
     
-  6.  
+    
+  6.  线程及异常处理
+  
+      6.1 Flutter 是单线程处理模型，内容包含 微服务循环 和 事件循环
+      
+      6.2 Flutter 的微服务循环 优先于 事件循环，处理完微服务循环中的内容 才会 处理事件循环中的内容
+      
+      6.3 全局异常捕获，在main()方法中将Flutter.onError设置为 自定义的异常处理函数即可。
+        
+          FlutterError.onError = (FlutterErrorDetails details) {
+            reportError(details);
+          };
+       
+      6.4 Flutter 中的 try... catch ... 只能捕获同步的异常，不能捕获到异步的异常
+      
+      6.5 异步异常捕获方式
+        1). 在Future.catchError()方法中进行捕获
+        2). 使用async...await的方式执行异步方法，通过try... catch捕获异常
+        3). 使用runzone方法，通过定义执行环境捕获异常.在zoneSpecification中可以定义拦截器，拦截执行环境中的方法
+         main() 
+         {
+            runZoned(() => runApp(MyApp()), 
+            zoneSpecification: new ZoneSpecification(
+                print: (Zone self, ZoneDelegate parent, Zone zone, String line) {
+                  parent.print(zone, "Intercepted: $line");
+                }),
+            onError: (Object obj, StackTrace stack) {
+                    var details=makeDetails(obj,stack);
+                    reportError(details);
+                }
+            );
+         }
+         
+         完整的异常处理示例：
+         
+         void main() {
+          FlutterError.onError = (FlutterErrorDetails details) {
+            reportErrorAndLog(details);
+          };
+          runZoned(
+            () => runApp(MyApp()),
+            zoneSpecification: ZoneSpecification(
+              print: (Zone self, ZoneDelegate parent, Zone zone, String line) {
+                collectLog(line); // 收集日志
+              },
+            ),
+            onError: (Object obj, StackTrace stack) {
+              var details = makeDetails(obj, stack);
+              reportErrorAndLog(details);
+            },
+          );
+        }
+         
+         
+        
+        
+      
